@@ -60,7 +60,7 @@ rpm: build
 
 deb: build
 	TARGET_OSARCH="linux/386" make build
-	cp build/check-* packaging/deb/debian/
+	cp build/mackerel-plugin-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 gox:
