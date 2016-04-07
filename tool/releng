@@ -37,7 +37,7 @@ use Getopt::Long;
 use File::Basename;
 
 chomp(my $REPO_NAME = `git rev-parse --show-toplevel`);
-$REPO_NAME =~ s|^.+/(\w+/\w+)$|$1|;
+$REPO_NAME =~ s|^.+/([^/]+/[^/]+)$|$1|;
 my $dry_run;
 my $verbose;
 my $next_version;
@@ -205,7 +205,7 @@ sub last_release {
 
     my ($tag) =
         sort { version->parse($b) <=> version->parse($a) }
-        map {/^v([0-9]+(?:\.[0-9]+)+)$/; $1 || ()}
+        map {if(/^v([0-9]+(?:\.[0-9]+)+)$/){ $1 } else { () }}
         map {chomp; $_} @out;
     $tag;
 }
@@ -238,13 +238,14 @@ sub merged_prs {
         if(m/Merge pull request #([0-9]+) /){ $1 } else { () }
     } `git log v$current_tag... --merges --oneline`;
 
+    say "Pull Requests: " . join(", ", @pull_nums);
     my @releases;
     for my $pull_num (@pull_nums) {
         my $url = sprintf "https://api.github.com/repos/%s/pulls/%d?state=closed", $REPO_NAME, $pull_num;
         my $res = http_get($url);
         unless ($res->{success}) {
             warnf "request to $url failed\n";
-            exit;
+            next; #exit;
         }
         my $data = eval { decode_json $res->{content} };
         if ($@) {
