@@ -1,6 +1,7 @@
 VERBOSE_FLAG = $(if $(VERBOSE),-verbose)
 
 VERSION = $$(git describe --tags --always --dirty) ($$(git name-rev --name-only HEAD))
+CURRENT_VERSION = $(shell git log --merges --oneline | perl -ne 'if(m/^.+Merge pull request \#[0-9]+ from .+\/bump-version-([0-9\.]+)/){print $$1;exit}')
 
 BUILD_FLAGS = -ldflags "\
 	      -s -w \
@@ -8,6 +9,10 @@ BUILD_FLAGS = -ldflags "\
 	      "
 
 TARGET_OSARCH="linux/amd64"
+
+check-variables:
+	echo "CURRENT_VERSION: ${CURRENT_VERSION}"
+	echo "TARGET_OSARCH: ${TARGET_OSARCH}"
 
 all: lint cover testtool rpm deb
 
@@ -48,10 +53,14 @@ cover: testdeps
 	gotestcover -v -covermode=count -coverprofile=.profile.cov -parallelpackages=4 ./...
 
 rpm: build
-	rpmbuild --define "_sourcedir `pwd`" -ba packaging/rpm/mackerel-agent-plugins.spec
+	TARGET_OSARCH="linux/386" make build
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch noarch" -bb packaging/rpm/mackerel-agent-plugins.spec
+	TARGET_OSARCH="linux/amd64" make build
+	rpmbuild --define "_sourcedir `pwd`"  --define "_version ${CURRENT_VERSION}" --define "buildarch x86_64" -bb packaging/rpm/mackerel-agent-plugins.spec
 
 deb: build
-	cp build/mackerel-plugin-* packaging/deb/debian/
+	TARGET_OSARCH="linux/386" make build
+	cp build/check-* packaging/deb/debian/
 	cd packaging/deb && debuild --no-tgz-check -rfakeroot -uc -us
 
 gox:
