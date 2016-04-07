@@ -93,5 +93,3 @@ Contribution
 * develop the plugin you want
 * create a pullrequest!
 
-
-
