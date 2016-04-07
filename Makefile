@@ -16,7 +16,7 @@ build: deps
 	for i in mackerel-plugin-*; do \
 	  gox $(VERBOSE_FLAG) $(BUILD_FLAGS) \
 	    -osarch=$(TARGET_OSARCH) -output build/$$i \
-	    github.com/mackerelio/mackerel-agent-plugins/$$i; \
+			`pwd | sed -e "s|$GOPATH/src/||"`/$$i; \
 	done
 
 test: testgo lint testtool
