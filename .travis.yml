@@ -25,16 +25,14 @@ before_deploy:
 - git checkout $TRAVIS_BRANCH
 - git fetch --depth=1000
 - git fetch --tags --depth=1000 || true
-- make check-variables
-- make rpm deb
 deploy:
 - provider: script
-  script: script/releng --task=upload-to-github-release -v
+  script: tool/releng --task=upload-to-github-release -v
   skip_cleanup: true
   on:
     branch: master
 - provider: script
-  script: script/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH -v
+  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH -v
   skip_cleanup: true
   on:
     all_branches: true
