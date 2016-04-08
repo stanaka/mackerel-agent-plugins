@@ -20,6 +20,37 @@ mackerel-agent-plugins (0.9.6-1) stable; urgency=low
     <https://github.com/stanaka/mackerel-agent-plugins/pull/5>
   * update (by stanaka)
     <https://github.com/stanaka/mackerel-agent-plugins/pull/5>
+  * Release version 0.9.6 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/6>
+  * Release version 0.9.6 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/6>
+  * Release version 0.9.6 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/7>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Fri, 08 Apr 2016 05:38:27 +0000
+
+mackerel-agent-plugins (0.9.6-1) stable; urgency=low
+
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * Bump version 0.9.4 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/2>
+  * Bump version 0.9.4 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/2>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/3>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/3>
+  * Release version 0.9.5 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/4>
+  * update (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/5>
+  * update (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/5>
 
  -- mackerel <mackerel-developers@hatena.ne.jp>  Fri, 08 Apr 2016 03:35:34 +0000
 
