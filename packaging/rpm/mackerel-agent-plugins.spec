@@ -49,6 +49,15 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Fri Apr 08 2016 <travis@localhost> - 0.9.5-1
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+- Bump version 0.9.4 (by stanaka)
+- Bump version 0.9.4 (by stanaka)
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+
 * Fri Mar 25 2016 <y.songmu@gmail.com> - 0.19.2
 - Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
 

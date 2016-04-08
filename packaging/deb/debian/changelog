@@ -1,3 +1,22 @@
+mackerel-agent-plugins (0.9.5-1) stable; urgency=low
+
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/1>
+  * Bump version 0.9.4 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/2>
+  * Bump version 0.9.4 (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/2>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/3>
+  * fix readme (by stanaka)
+    <https://github.com/stanaka/mackerel-agent-plugins/pull/3>
+
+ -- travis@localhost <travis@localhost>  Fri, 08 Apr 2016 01:26:36 +0000
+
 mackerel-agent-plugins (0.19.2-1) stable; urgency=low
 
   * Revert "use /usr/bin/mackerel-plugin-*" (by Songmu)
