@@ -213,7 +213,6 @@ sub last_release {
         map {if(/^\d.\d$/){ $_ . ".0" } else { $_ } }
         map {if(/^v([0-9]+(?:\.[0-9]+)+)$/){ $1 } else { () }}
         map {chomp; $_} @out;
-    map {chomp; $_} @out);
     $tag;
 }
 
@@ -438,7 +437,14 @@ sub create_pull_request {
     if(!defined($ret) || $ret == 0){
         infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
     } else {
-        infof "Pull Request already seems to exist.\n"
+        # do push and pull-request again
+        git qw/push -u/, "https://$ENV{GITHUB_TOKEN}\@github.com/$REPO_NAME.git";
+        $ret = hub_with_exit_code qw/pull-request -m/, $pr_body, qq/-b/, qq/$REPO_NAME:master/;
+        if(!defined($ret) || $ret == 0){
+            infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
+        } else {
+            infof "Pull Request already seems to exist.\n"
+        }
     }
 }
 
