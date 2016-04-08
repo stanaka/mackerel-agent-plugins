@@ -41,6 +41,7 @@ $REPO_NAME =~ s|^.+/([^/]+/[^/]+)$|$1|;
 my $dry_run;
 my $verbose;
 my $next_version;
+my $spec_files;
 
 sub DEBUG() { $ENV{MC_RELENG_DEBUG} || $verbose }
 
@@ -304,21 +305,23 @@ sub update_changelog {
         }
     };
 
-    replace 'packaging/rpm/mkr.spec' => sub {
-        my $content = shift;
+    foreach my $spec (split(',', $spec_files)){
+        replace $spec => sub {
+            my $content = shift;
 
-        my $update = sprintf "* %s <%s> - %s-1\n", $now->strftime('%a %b %d %Y'), $email, $next_version;
-        for my $rel (@releases) {
-            $update .= sprintf "- %s (by %s)\n", $rel->{title}, $rel->{user};
-        }
-        if(index($content, $update) == -1){
-            infof "update 'packaging/rpm/mkr.spec'\n";
-            $ret = 1;
-            $content =~ s/%changelog/%changelog\n$update/;
-        } else {
-            infof "skip to update 'packaging/rpm/mkr.spec'\n";
-        }
-        $content;
+            my $update = sprintf "* %s <%s> - %s-1\n", $now->strftime('%a %b %d %Y'), $email, $next_version;
+            for my $rel (@releases) {
+                $update .= sprintf "- %s (by %s)\n", $rel->{title}, $rel->{user};
+            }
+            if(index($content, $update) == -1){
+                infof "update 'packaging/rpm/mkr.spec'\n";
+                $ret = 1;
+                $content =~ s/%changelog/%changelog\n$update/;
+            } else {
+                infof "skip to update 'packaging/rpm/mkr.spec'\n";
+            }
+            $content;
+        };
     };
 
     replace 'CHANGELOG.md' => sub {
@@ -449,6 +452,8 @@ $0
   --task=<task>            # 'create-pullrequest' or 'github-release'
   --next-version=<version> # specify next version. if not specified, a
                            # value derived from the branch name is used.
+  --spec-files=<files>     # target spec files for updating changelog.
+                           # multiple files can be set with separating by ','.
   --verbose
   --dry-run
 EOS
@@ -465,6 +470,7 @@ sub main {
         "dry-run" => \$dry_run,
         "current-branch=s" => \$current_branch,
         "next-version=s" => \$next_version,
+        "spec-files=s" => \$spec_files,
         );
 
     if($help){
