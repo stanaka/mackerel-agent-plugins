@@ -2,8 +2,7 @@
 
 =head DESCRIPTION
 
-Release Engineering script for mkr
-orivinal: https://github.com/mackerelio/mackerel-agent/blob/v0.20.1/tool/releng
+Release Engineering script for mackerel related packages.
 
 =head SYNOPSIS
 
@@ -12,6 +11,8 @@ orivinal: https://github.com/mackerelio/mackerel-agent/blob/v0.20.1/tool/releng
         --task=<task>            # 'create-pullrequest' or 'github-release'
         --next-version=<version> # specify next version. if not specified, a
                                  # value derived from the branch name is used.
+        --package-name=<name>    # target package name. if not specified,
+                                 # the repository name is used.
         --verbose
         --dry-run
 
@@ -38,10 +39,12 @@ use File::Basename;
 
 chomp(my $REPO_NAME = `git rev-parse --show-toplevel`);
 $REPO_NAME =~ s|^.+/([^/]+/[^/]+)$|$1|;
+$REPO_NAME =~ m!/([^/]+)$!;
+my $REPO = $1;
 my $dry_run;
 my $verbose;
 my $next_version;
-my $spec_files;
+my $package_name = $REPO;
 
 sub DEBUG() { $ENV{MC_RELENG_DEBUG} || $verbose }
 
@@ -180,6 +183,7 @@ sub spew {
 }
 sub replace {
     my ($file, $code) = @_;
+    if(!-f $file){ errorf "File does not exist: %s\n", $file; }
     my $content = $code->(slurp($file));
     spew($file, $content);
 }
@@ -288,7 +292,7 @@ sub update_changelog {
     replace 'packaging/deb/debian/changelog' => sub {
         my $content = shift;
 
-        my $update = "mkr ($next_version-1) stable; urgency=low\n\n";
+        my $update = "$package_name ($next_version-1) stable; urgency=low\n\n";
         for my $rel (@releases) {
             $update .= sprintf "  * %s (by %s)\n    <%s>\n", $rel->{title}, $rel->{user}, $rel->{url};
         }
@@ -305,23 +309,22 @@ sub update_changelog {
         }
     };
 
-    foreach my $spec (split(',', $spec_files)){
-        replace $spec => sub {
-            my $content = shift;
+    my $spec = sprintf "packaging/rpm/%s.spec", $package_name;
+    replace $spec => sub {
+        my $content = shift;
 
-            my $update = sprintf "* %s <%s> - %s-1\n", $now->strftime('%a %b %d %Y'), $email, $next_version;
-            for my $rel (@releases) {
-                $update .= sprintf "- %s (by %s)\n", $rel->{title}, $rel->{user};
-            }
-            if(index($content, $update) == -1){
-                infof "update 'packaging/rpm/mkr.spec'\n";
-                $ret = 1;
-                $content =~ s/%changelog/%changelog\n$update/;
-            } else {
-                infof "skip to update 'packaging/rpm/mkr.spec'\n";
-            }
-            $content;
-        };
+        my $update = sprintf "* %s <%s> - %s-1\n", $now->strftime('%a %b %d %Y'), $email, $next_version;
+        for my $rel (@releases) {
+            $update .= sprintf "- %s (by %s)\n", $rel->{title}, $rel->{user};
+        }
+        if(index($content, $update) == -1){
+            infof "update '%s'\n", $spec;
+            $ret = 1;
+            $content =~ s/%changelog/%changelog\n$update/;
+        } else {
+            infof "skip to update '%s'\n", $spec;
+        }
+        $content;
     };
 
     replace 'CHANGELOG.md' => sub {
@@ -353,8 +356,6 @@ sub build_pull_request_body {
 }
 
 sub upload_to_github_release {
-    $REPO_NAME =~ m!/([^/]+)$!;
-    my $REPO = $1;
     my $ret = github_release_with_exit_code qw/release --user/, "stanaka",
         qw/--repo/, $REPO,
         qw/--tag/, "v". next_version(),
@@ -369,7 +370,7 @@ sub upload_to_github_release {
 
     # upload files
     my $description = "";
-    my @filepaths = glob("~/rpmbuild/RPMS/*/*.rpm packaging/*.deb snapshot/mkr_*.zip");
+    my @filepaths = glob("~/rpmbuild/RPMS/*/*.rpm packaging/*.deb snapshot/*.zip");
     infof "uploading following files:\n" . join("\n", @filepaths). "\n";
     for my $path (@filepaths){
         my $filename = basename($path);
@@ -430,7 +431,7 @@ sub create_pull_request {
     infof "Push changes\n";
     git qw/pull/;
     $ret = hub_with_exit_code qw/pull-request -m/, $pr_body, qq/-b/, qq/$REPO_NAME:master/;
-    if($ret && $ret == 0){
+    if(!defined($ret) || $ret == 0){
         infof "Releasing pull request is created. Review and merge it. You can update changelogs and commit more in this branch before merging.\n";
     } else {
         infof "Pull Request already seems to exist.\n"
@@ -452,8 +453,8 @@ $0
   --task=<task>            # 'create-pullrequest' or 'github-release'
   --next-version=<version> # specify next version. if not specified, a
                            # value derived from the branch name is used.
-  --spec-files=<files>     # target spec files for updating changelog.
-                           # multiple files can be set with separating by ','.
+  --package-name=<name>    # target package name. if not specified,
+                           # the repository name is used.
   --verbose
   --dry-run
 EOS
@@ -470,7 +471,7 @@ sub main {
         "dry-run" => \$dry_run,
         "current-branch=s" => \$current_branch,
         "next-version=s" => \$next_version,
-        "spec-files=s" => \$spec_files,
+        "package-name=s" => \$package_name,
         );
 
     if($help){

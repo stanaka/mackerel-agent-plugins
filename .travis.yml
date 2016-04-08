@@ -32,7 +32,7 @@ deploy:
   on:
     branch: master
 - provider: script
-  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH --spec-files=packaging/rpm/mackerel-agent-plugins.spec -v
+  script: tool/releng --task=create-pullrequest --current-branch=$TRAVIS_BRANCH -v
   skip_cleanup: true
   on:
     all_branches: true
