@@ -210,8 +210,10 @@ sub last_release {
 
     my ($tag) =
         sort { version->parse($b) <=> version->parse($a) }
+        map {if(/^\d.\d$/){ $_ . ".0" } else { $_ } }
         map {if(/^v([0-9]+(?:\.[0-9]+)+)$/){ $1 } else { () }}
         map {chomp; $_} @out;
+    map {chomp; $_} @out);
     $tag;
 }
 
@@ -408,7 +410,7 @@ sub create_pull_request {
         return;
     }
 
-    infof "Update changelogs.\n";
+    infof "Update changelogs, between %s and %s.\n", $current_version, $next_version;
     my @releases = merged_prs $current_version;
     my $ret = 0;
     if(@releases){
