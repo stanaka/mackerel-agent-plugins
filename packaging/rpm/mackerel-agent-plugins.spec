@@ -60,6 +60,21 @@ done
 - Release version 0.9.5 (by stanaka)
 - update (by stanaka)
 - update (by stanaka)
+- Release version 0.9.6 (by stanaka)
+- Release version 0.9.6 (by stanaka)
+- Release version 0.9.6 (by stanaka)
+
+* Fri Apr 08 2016 <mackerel-developers@hatena.ne.jp> - 0.9.6-1
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+- Bump version 0.9.4 (by stanaka)
+- Bump version 0.9.4 (by stanaka)
+- fix readme (by stanaka)
+- fix readme (by stanaka)
+- Release version 0.9.5 (by stanaka)
+- update (by stanaka)
+- update (by stanaka)
 
 * Fri Apr 08 2016 <travis@localhost> - 0.9.5-1
 - fix readme (by stanaka)
